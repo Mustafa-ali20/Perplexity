@@ -1,6 +1,7 @@
 import userModel from "../models/user.model.js";
 import asyncHandler from "express-async-handler";
 import { sendEmail } from "../services/mail.service.js";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 export const register = asyncHandler(async (req, res) => {
@@ -64,7 +65,7 @@ export const login = asyncHandler(async (req, res) => {
 
   if (!user.verified) {
     res.status(400);
-    throw new Error("Email isnt verifed")
+    throw new Error("Email isnt verifed, please verify it before logging in");
   }
 
   const isMatch = await bcrypt.compare(password, user.password);
@@ -82,6 +83,8 @@ export const login = asyncHandler(async (req, res) => {
     { expiresIn: "7d" },
   );
 
+  res.cookie("token", token);
+
   res.status(200).json({
     success: true,
     message: "Login sucessfull",
@@ -90,6 +93,14 @@ export const login = asyncHandler(async (req, res) => {
       username: user.username,
       email: user.email,
     },
+  });
+});
+
+export const getMe = asyncHandler(async (req, res) => {
+  res.status(200).json({
+    message: "user details fetched successfully",
+    success: true,
+    user: req.user,
   });
 });
 
