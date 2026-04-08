@@ -1,0 +1,145 @@
+@import url("https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap");
+.auth-root {
+  font-family: "DM Mono", monospace;
+}
+
+.auth-title {
+  font-family: "Syne", sans-serif;
+}
+
+.glow-border {
+  position: relative;
+}
+.glow-border::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #31b8c6, transparent, rgba(49, 184, 198, 0.1254901961));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 0;
+}
+.glow-border:focus-within::before {
+  opacity: 1;
+}
+
+.input-field {
+  background: #0d1117;
+  border: 1px solid #1e2d2f;
+  color: #e2e8f0;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  font-family: "DM Mono", monospace;
+  font-size: 0.875rem;
+  letter-spacing: 0.02em;
+}
+.input-field:focus {
+  outline: none;
+  border-color: #31b8c6;
+  box-shadow: 0 0 0 3px rgba(49, 184, 198, 0.0823529412), 0 0 20px rgba(49, 184, 198, 0.062745098);
+}
+.input-field::-moz-placeholder {
+  color: #3a4a4d;
+}
+.input-field::placeholder {
+  color: #3a4a4d;
+}
+
+.submit-btn {
+  background: #31b8c6;
+  color: #050d0e;
+  font-family: "Syne", sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+.submit-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: white;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.submit-btn:hover::after {
+  opacity: 0.08;
+}
+.submit-btn:hover {
+  box-shadow: 0 0 30px rgba(49, 184, 198, 0.2509803922);
+  transform: translateY(-1px);
+}
+.submit-btn:active {
+  transform: translateY(0);
+}
+
+.corner-decoration {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-color: #31b8c6;
+  border-style: solid;
+  opacity: 0.6;
+}
+
+.label-text {
+  font-family: "DM Mono", monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #31b8c6;
+}
+
+.card-bg {
+  background: #080e10;
+  border: 1px solid #0f1e21;
+  box-shadow: 0 0 60px rgba(49, 184, 198, 0.031372549), 0 25px 50px rgba(0, 0, 0, 0.5);
+}
+
+.divider-line {
+  height: 1px;
+  background: linear-gradient(to right, transparent, #1e2d2f, transparent);
+}
+
+.eye-btn {
+  color: #3a4a4d;
+  transition: color 0.2s;
+  font-family: "DM Mono", monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+}
+.eye-btn:hover {
+  color: #31b8c6;
+}
+
+.link-text {
+  color: #31b8c6;
+  transition: opacity 0.2s;
+  font-size: 0.8rem;
+}
+.link-text:hover {
+  opacity: 0.7;
+}
+
+.tag-chip {
+  background: rgba(49, 184, 198, 0.062745098);
+  border: 1px solid rgba(49, 184, 198, 0.1450980392);
+  color: #31b8c6;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  font-family: "DM Mono", monospace;
+}
+
+.hint-text {
+  font-size: 0.68rem;
+  color: #2a3d40;
+  letter-spacing: 0.05em;
+}
+
+.identifier-hint {
+  font-size: 0.68rem;
+  transition: color 0.2s;
+}/*# sourceMappingURL=Login.css.map */

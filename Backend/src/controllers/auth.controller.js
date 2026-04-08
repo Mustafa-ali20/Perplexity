@@ -54,9 +54,11 @@ export const register = asyncHandler(async (req, res) => {
 });
 
 export const login = asyncHandler(async (req, res) => {
-  const { username, email, password } = req.body;
+  const { identifier, password } = req.body;
 
-  const user = await userModel.findOne(email ? { email } : { username });
+  const user = await userModel.findOne(
+    isEmail(identifier) ? { email: identifier } : { username: identifier },
+  );
 
   if (!user) {
     res.status(400);

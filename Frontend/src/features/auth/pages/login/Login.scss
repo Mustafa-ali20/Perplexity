@@ -1,0 +1,186 @@
+@import url("https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap");
+
+// Color Variables
+$primary-color: #31b8c6;
+$primary-color-80: #31b8c680;
+$primary-color-40: #31b8c640;
+$primary-color-25: #31b8c625;
+$primary-color-20: #31b8c620;
+$primary-color-15: #31b8c615;
+$primary-color-10: #31b8c610;
+$primary-color-08: #31b8c608;
+$bg-dark: #0d1117;
+$bg-darker: #080e10;
+$bg-darkest: #050d0e;
+$border-color: #1e2d2f;
+$border-light: #0f1e21;
+$text-primary: #e2e8f0;
+$text-muted: #3a4a4d;
+$text-subtle: #2a3d40;
+$white-08: rgba(255, 255, 255, 0.08);
+$black-50: rgba(0, 0, 0, 0.5);
+
+// Font Variables
+$font-syne: "Syne", sans-serif;
+$font-dm-mono: "DM Mono", monospace;
+
+// Mixins
+@mixin transition($properties...) {
+    transition: $properties;
+}
+
+.auth-root {
+    font-family: $font-dm-mono;
+}
+
+.auth-title {
+    font-family: $font-syne;
+}
+
+.glow-border {
+    position: relative;
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: -1px;
+        border-radius: 4px;
+        background: linear-gradient(135deg, $primary-color, transparent, $primary-color-20);
+        opacity: 0;
+        @include transition(opacity 0.3s ease);
+        z-index: 0;
+    }
+
+    &:focus-within::before {
+        opacity: 1;
+    }
+}
+
+.input-field {
+    background: $bg-dark;
+    border: 1px solid $border-color;
+    color: $text-primary;
+    @include transition(border-color 0.2s ease, box-shadow 0.2s ease);
+    font-family: $font-dm-mono;
+    font-size: 0.875rem;
+    letter-spacing: 0.02em;
+
+    &:focus {
+        outline: none;
+        border-color: $primary-color;
+        box-shadow:
+            0 0 0 3px $primary-color-15,
+            0 0 20px $primary-color-10;
+    }
+
+    &::placeholder {
+        color: $text-muted;
+    }
+}
+
+.submit-btn {
+    background: $primary-color;
+    color: $bg-darkest;
+    font-family: $font-syne;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    @include transition(all 0.2s ease);
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: white;
+        opacity: 0;
+        @include transition(opacity 0.2s ease);
+    }
+
+    &:hover::after {
+        opacity: 0.08;
+    }
+
+    &:hover {
+        box-shadow: 0 0 30px $primary-color-40;
+        transform: translateY(-1px);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+.corner-decoration {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-color: $primary-color;
+    border-style: solid;
+    opacity: 0.6;
+}
+
+.label-text {
+    font-family: $font-dm-mono;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: $primary-color;
+}
+
+.card-bg {
+    background: $bg-darker;
+    border: 1px solid $border-light;
+    box-shadow:
+        0 0 60px $primary-color-08,
+        0 25px 50px $black-50;
+}
+
+.divider-line {
+    height: 1px;
+    background: linear-gradient(to right, transparent, $border-color, transparent);
+}
+
+.eye-btn {
+    color: $text-muted;
+    @include transition(color 0.2s);
+    font-family: $font-dm-mono;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+
+    &:hover {
+        color: $primary-color;
+    }
+}
+
+.link-text {
+    color: $primary-color;
+    @include transition(opacity 0.2s);
+    font-size: 0.8rem;
+
+    &:hover {
+        opacity: 0.7;
+    }
+}
+
+.tag-chip {
+    background: $primary-color-10;
+    border: 1px solid $primary-color-25;
+    color: $primary-color;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    font-family: $font-dm-mono;
+}
+
+.hint-text {
+    font-size: 0.68rem;
+    color: $text-subtle;
+    letter-spacing: 0.05em;
+}
+
+.identifier-hint {
+    font-size: 0.68rem;
+    @include transition(color 0.2s);
+}

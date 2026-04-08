@@ -1,0 +1,156 @@
+ 
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap');
+
+// Color variables
+$primary-color: #31b8c6;
+$bg-dark: #0d1117;
+$bg-darker: #080e10;
+$border-color: #1e2d2f;
+$text-light: #e2e8f0;
+$text-muted: #3a4a4d;
+$border-subtle: #0f1e21;
+
+.auth-root {
+    font-family: 'DM Mono', monospace;
+}
+
+.auth-title {
+    font-family: 'Syne', sans-serif;
+}
+
+.glow-border {
+    position: relative;
+
+    &::before {
+        content: '';
+        position: absolute;
+        inset: -1px;
+        border-radius: 4px;
+        background: linear-gradient(135deg, $primary-color, transparent, #{$primary-color}20);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 0;
+    }
+
+    &:focus-within::before {
+        opacity: 1;
+    }
+}
+
+.input-field {
+    background: $bg-dark;
+    border: 1px solid $border-color;
+    color: $text-light;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.875rem;
+    letter-spacing: 0.02em;
+
+    &:focus {
+        outline: none;
+        border-color: $primary-color;
+        box-shadow: 0 0 0 3px #{$primary-color}15, 0 0 20px #{$primary-color}10;
+    }
+
+    &::placeholder {
+        color: $text-muted;
+    }
+}
+
+.submit-btn {
+    background: $primary-color;
+    color: #050d0e;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: white;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+
+    &:hover {
+        box-shadow: 0 0 30px #{$primary-color}40;
+        transform: translateY(-1px);
+
+        &::after {
+            opacity: 0.08;
+        }
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+.corner-decoration {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-color: $primary-color;
+    border-style: solid;
+    opacity: 0.6;
+}
+
+.label-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: $primary-color;
+}
+
+.card-bg {
+    background: $bg-darker;
+    border: 1px solid $border-subtle;
+    box-shadow: 0 0 60px #{$primary-color}08, 0 25px 50px #00000080;
+}
+
+.noise-overlay {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+}
+
+.divider-line {
+    height: 1px;
+    background: linear-gradient(to right, transparent, $border-color, transparent);
+}
+
+.eye-btn {
+    color: $text-muted;
+    transition: color 0.2s;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+
+    &:hover {
+        color: $primary-color;
+    }
+}
+
+.link-text {
+    color: $primary-color;
+    transition: opacity 0.2s;
+    font-size: 0.8rem;
+
+    &:hover {
+        opacity: 0.7;
+    }
+}
+
+.tag-chip {
+    background: #{$primary-color}10;
+    border: 1px solid #{$primary-color}25;
+    color: $primary-color;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    font-family: 'DM Mono', monospace;
+}
