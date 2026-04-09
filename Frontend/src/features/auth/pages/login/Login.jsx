@@ -1,13 +1,18 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
-import "./Login.css";
+import { Link, Navigate, useNavigate } from "react-router";
+import "./Login.scss";
 import { useAuth } from "../../hook/useAuth";
+import { useSelector } from "react-redux";
 
 const Login = () => {
   const [formData, setFormData] = useState({
     identifier: "",
     password: "",
   });
+  const [fieldErrors, setFieldErrors] = useState({});
+
+  const user = useSelector((state) => state.auth.user);
+  const loading = useSelector((state) => state.auth.loading);
 
   const { handleLogin } = useAuth();
 
@@ -19,22 +24,37 @@ const Login = () => {
 
   const isEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleSubmitForm = async (e) => {
     e.preventDefault();
+    setFieldErrors({});
 
-    // automatically detect if user typed email or username
-    const payload = {
-      password: formData.password,
-      ...(isEmail(formData.identifier)
-        ? { email: formData.identifier }
-        : { username: formData.identifier }),
-    };
+    try {
+      const success = await handleLogin({
+        identifier: formData.identifier,
+        password: formData.password,
+      });
+      if (success) navigate("/");
+    } catch (error) {
+      const responseData = error.response?.data;
 
-   await handleLogin(payload)
-   navigate("/")
+      // case 1 - validation errors array
+      if (responseData?.errors) {
+        const mapped = {};
+        responseData.errors.forEach((e) => (mapped[e.path] = e.msg));
+        setFieldErrors(mapped);
+      }
+
+      // case 2 - controller error message
+      if (responseData?.message) {
+        setFieldErrors({ identifier: responseData.message });
+      }
+    }
   };
+
+  if (loading) return null;
+  if (user) return <Navigate to="/" replace />;
 
   return (
     <>
@@ -147,10 +167,15 @@ const Login = () => {
                     value={formData.identifier}
                     onChange={handleChange}
                     placeholder="you@domain.com or your_handle"
-                    className="input-field w-full px-4 py-3 rounded relative z-10"
+                    className={`input-field w-full px-4 py-3 rounded relative z-10 ${
+                      fieldErrors.identifier ? "error" : ""
+                    }`}
                     required
                   />
                 </div>
+                {fieldErrors.identifier && (
+                  <p className="field-error">{fieldErrors.identifier}</p>
+                )}
               </div>
 
               {/* password */}
@@ -172,9 +197,14 @@ const Login = () => {
                     value={formData.password}
                     onChange={handleChange}
                     placeholder="••••••••"
-                    className="input-field w-full px-4 py-3 pr-16 rounded relative z-10"
+                    className={`input-field w-full px-4 py-3 pr-16 rounded relative z-10 ${
+                      fieldErrors.password ? "error" : ""
+                    }`}
                     required
                   />
+                  {fieldErrors.password && (
+                    <p className="field-error">{fieldErrors.password}</p>
+                  )}
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}

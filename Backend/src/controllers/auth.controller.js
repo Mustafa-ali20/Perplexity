@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken";
 export const register = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
 
-  const userExists = await userModel.findOne({ email }, { username });
+  const userExists = await userModel.findOne({ email });
   if (userExists) {
     res.status(400);
     throw new Error("User already exists with this email");
@@ -53,6 +53,8 @@ export const register = asyncHandler(async (req, res) => {
   });
 });
 
+const isEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
 export const login = asyncHandler(async (req, res) => {
   const { identifier, password } = req.body;
 
@@ -85,7 +87,10 @@ export const login = asyncHandler(async (req, res) => {
     { expiresIn: "7d" },
   );
 
-  res.cookie("token", token);
+  res.cookie("token", token, {
+    httpOnly: true,
+    maxAge: 7 * 24 * 60 * 60 * 1000, 
+  });
 
   res.status(200).json({
     success: true,
@@ -109,23 +114,20 @@ export const getMe = asyncHandler(async (req, res) => {
 export const verifyEmail = asyncHandler(async (req, res) => {
   const { token } = req.query;
 
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  const user = await userModel.findOne({ email: decoded.email });
-
-  //added by claude to check if token is missing in query - right now if someone hits the endpoint without a token it crashes
+  // check token first before using it
   if (!token) {
     res.status(400);
     throw new Error("Verification token is missing");
   }
 
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  const user = await userModel.findOne({ email: decoded.email });
+
   if (!user) {
-    return res.status(400).json({
-      message: "Invalid token",
-      success: false,
-      err: "usernot found",
-    });
+    res.status(400);
+    throw new Error("Invalid token, user not found");
   }
-  // added my claude to check if the user has already verified
+
   if (user.verified) {
     return res.status(400).json({
       success: false,
@@ -140,7 +142,7 @@ export const verifyEmail = asyncHandler(async (req, res) => {
     <h1>Email verified successfully</h1>
     <p>Your email has been verified. You can now log into your account</p>
     <a href="http://localhost:3000/login">Go to Login</a>
-    `;
+  `;
 
   res.status(200).send(html);
 });

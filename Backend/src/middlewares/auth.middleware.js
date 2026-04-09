@@ -5,6 +5,11 @@ import userModel from "../models/user.model.js";
 const authMiddleware = asyncHandler(async (req, res, next) => {
   const token = req.cookies.token;
 
+  if (!token) {
+    res.status(401);
+    throw new Error("Not authorized, no token");
+  }
+
   const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
   const user = await userModel.findById(decoded.id).select("-password");

@@ -12,6 +12,7 @@ export function useAuth() {
       return await asyncFn();
     } catch (error) {
       dispatch(setError(error.response?.data?.message || fallbackMessage));
+      throw error; // re-throw so Login.jsx catch block can also handle it
     } finally {
       dispatch(setLoading(false));
     }
@@ -25,18 +26,25 @@ export function useAuth() {
   }
 
   async function handleLogin({ identifier, password }) {
-    await withDispatch(async () => {
+    return await withDispatch(async () => {
       const data = await login({ identifier, password });
       dispatch(setUser(data.user));
+      return true;
     }, "Login failed");
   }
 
-  async function handleGetMe() {
-    await withDispatch(async () => {
-      const data = await getMe();
-      dispatch(setUser(data.user));
-    }, "Failed to fetch user data");
+ async function handleGetMe() {
+  try {
+    dispatch(setLoading(true));
+    const data = await getMe();
+    dispatch(setUser(data.user));
+  } catch (error) {
+    // silently ignore - user just isn't logged in
+    dispatch(setUser(null));
+  } finally {
+    dispatch(setLoading(false));
   }
+}
 
   return { handleGetMe, handleLogin, handleRegister };
 }

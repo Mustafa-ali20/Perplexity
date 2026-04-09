@@ -49,25 +49,10 @@ export const registerValidator = [
 ];
 
 export const loginValidator = [
-  body("email")
-    .optional()
+   body("identifier")
     .trim()
-    .isEmail()
-    .withMessage("Must be a valid email address"),
-
-  body("username")
-    .optional()
-    .trim()
-    .isString()
-    .withMessage("Username must be a string"),
-
-  // custom check to make sure at least one is provided
-  body("email").custom((value, { req }) => {
-    if (!value && !req.body.username) {
-      throw new Error("Either email or username is required");
-    }
-    return true;
-  }),
+    .notEmpty()
+    .withMessage("Email or username is required"),
 
   body("password")
     .notEmpty()
