@@ -45,6 +45,19 @@
   color: #3a4a4d;
 }
 
+.input-field.error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.0823529412);
+}
+
+.field-error {
+  color: #ef4444;
+  font-size: 0.7rem;
+  margin-top: 4px;
+  font-family: "DM Mono", monospace;
+  letter-spacing: 0.05em;
+}
+
 .submit-btn {
   background: #31b8c6;
   color: #050d0e;
