@@ -1,4 +1,5 @@
 const errorHandler = (err, req, res, next) => {
+  console.error(err);
   let statusCode = res.statusCode === 200 ? 500 : res.statusCode;
   let message = err.message || "Something went wrong";
 
@@ -11,10 +12,12 @@ const errorHandler = (err, req, res, next) => {
   // mongoose validation error
   if (err.name === "ValidationError") {
     statusCode = 400;
-    message = Object.values(err.errors).map((e) => e.message).join(", ");
+    message = Object.values(err.errors)
+      .map((e) => e.message)
+      .join(", ");
   }
 
-  //2. Validation Error 
+  //2. Validation Error
   // When your schema has required: true or minlength etc. and the data doesn't match, Mongoose throws a ValidationError automatically before even saving to the database
 
   // invalid mongo id

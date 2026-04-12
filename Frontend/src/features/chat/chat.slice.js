@@ -4,11 +4,28 @@ const chatSlice = createSlice({
   name: "chat",
   initialState: {
     chat: {},
-    currentChatId: null,
+    currentChatId: localStorage.getItem("currentChatId") || null,
     isLoading: false,
     error: null,
   },
   reducers: {
+    createNewChat: (state, action) => {
+      const { chatId, title } = action.payload;
+      state.chat[chatId] = {
+        id: chatId,
+        title,
+        messages: [],
+        lastUpdated: new Date().toISOString(),
+      };
+    },
+    addNewMessage: (state, action) => {
+      const { chatId, content, role } = action.payload;
+      state.chat[chatId].messages.push({ content, role });
+    },
+    addMessages: (state, action) => {
+      const { chatId, messages } = action.payload;
+      state.chat[chatId].messages.push(...messages);
+    },
     setChats: (state, action) => {
       state.chat = action.payload;
     },
@@ -24,6 +41,13 @@ const chatSlice = createSlice({
   },
 });
 
-export const { setChats, setCurrentChatId, setLoading, setError } =
-  chatSlice.actions;
+export const {
+  setChats,
+  setCurrentChatId,
+  setLoading,
+  setError,
+  createNewChat,
+  addNewMessage,
+  addMessages,
+} = chatSlice.actions;
 export default chatSlice.reducer;

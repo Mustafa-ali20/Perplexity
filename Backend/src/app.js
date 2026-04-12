@@ -25,7 +25,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRouter);
-app.use("/api/chats", chatRouter);
+app.use("/api/chat", chatRouter);
 
 app.use(errorHandler);
 
