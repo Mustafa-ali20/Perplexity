@@ -30,9 +30,9 @@ export const register = asyncHandler(async (req, res) => {
   const verifyUrl = `${process.env.CLIENT_URL}/verified?token=${emailVerificationToken}`;
 
   await sendEmail({
-  to: email,
-  subject: "Verify your Perplexity account",
-  html: `
+    to: email,
+    subject: "Verify your Perplexity account",
+    html: `
     <div style="font-family: 'Courier New', monospace; background: #f4f6f8; padding: 40px 20px;">
       <div style="max-width: 540px; margin: 0 auto; background: #ffffff; border-radius: 6px; overflow: hidden; border: 1px solid #e2e8f0;">
         
@@ -82,7 +82,7 @@ export const register = asyncHandler(async (req, res) => {
       </div>
     </div>
   `,
-});
+  });
 
   res.status(201).json({
     message:
@@ -133,6 +133,8 @@ export const login = asyncHandler(async (req, res) => {
   res.cookie("token", token, {
     httpOnly: true,
     maxAge: 7 * 24 * 60 * 60 * 1000,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   });
 
   res.status(200).json({
