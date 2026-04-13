@@ -4,6 +4,7 @@ import {
   verifyEmail,
   login,
   getMe,
+  logout,
 } from "../controllers/auth.controller.js";
 import {
   registerValidator,
@@ -44,5 +45,12 @@ authRouter.get("/get-me", authMiddleware, getMe);
  * @query {token}
  */
 authRouter.get("/verify-email", verifyEmail);
+
+/**
+ * @route POST /api/auth/logout
+ * @desc Logout user by clearing the token cookie
+ * @access Private
+ */
+authRouter.post("/logout", authMiddleware, logout);
 
 export default authRouter;

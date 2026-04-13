@@ -3,7 +3,10 @@ import { useChat } from "../hooks/useChat";
 import ReactMarkdown from "react-markdown";
 import { useSelector, useDispatch } from "react-redux";
 import { setCurrentChatId } from "../chat.slice";
+import { logout } from "../../auth/services/auth.api";
 import "./Dashboard.scss";
+import { useNavigate, Link } from "react-router";
+import { setUser } from "../../auth/auth.slice";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -14,6 +17,7 @@ const Dashboard = () => {
     handleSendMessage,
   } = useChat();
 
+  const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   const chats = useSelector((state) => state.chat.chat);
   const currentChatId = useSelector((state) => state.chat.currentChatId);
@@ -24,20 +28,20 @@ const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const messagesEndRef = useRef(null);
 
-  useEffect(() => {
+useEffect(() => {
+  const init = async () => {
     if (user) {
       handleInitializeSocket();
-      handleGetChats();
-    }
-  }, []);
+      const loadedChats = await handleGetChats(); 
 
-  // after chats are loaded, restore last open chat from localStorage
-  useEffect(() => {
-    const savedChatId = localStorage.getItem("currentChatId");
-    if (savedChatId && chats[savedChatId]) {
-      handleOpenChat(savedChatId, chats);
+      const savedChatId = localStorage.getItem("currentChatId");
+      if (savedChatId && loadedChats[savedChatId]) {
+        handleOpenChat(savedChatId, loadedChats);
+      }
     }
-  }, [chats]);
+  };
+  init();
+}, [user]);
 
   // save currentChatId to localStorage whenever it changes
   useEffect(() => {
@@ -82,6 +86,13 @@ const Dashboard = () => {
     localStorage.removeItem("currentChatId");
     setSidebarOpen(false);
   };
+
+  const handleLogout = async () => {
+  await logout();
+  dispatch(setUser(null));
+  localStorage.removeItem("currentChatId");
+  navigate("/login");
+};
 
   const filteredChats = Object.values(chats).filter((c) =>
     c.title?.toLowerCase().includes(search.toLowerCase()),
@@ -162,12 +173,35 @@ const Dashboard = () => {
         </div>
 
         <div className="sidebar-footer">
-          <div className="user-chip">
-            <div className="user-avatar">
-              {user?.username?.[0]?.toUpperCase() || "U"}
+          {user ? (
+            <div className="user-chip">
+              <div className="user-avatar">
+                {user?.username?.[0]?.toUpperCase() || "U"}
+              </div>
+              <span className="user-name">{user?.username || "User"}</span>
+              <button className="logout-btn" onClick={handleLogout}>
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
+                </svg>
+              </button>
             </div>
-            <span className="user-name">{user?.username || "User"}</span>
-          </div>
+          ) : (
+            <div className="auth-btns">
+              <Link to="/login" className="auth-btn-outline">
+                Sign In
+              </Link>
+              <Link to="/register" className="auth-btn-solid">
+                Sign Up
+              </Link>
+            </div>
+          )}
         </div>
       </aside>
 

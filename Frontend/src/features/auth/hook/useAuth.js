@@ -19,9 +19,10 @@ export function useAuth() {
   }
 
   async function handleRegister({ username, email, password }) {
-    await withDispatch(async () => {
+    return await withDispatch(async () => {
       const user = await register({ username, email, password });
       dispatch(setUser(user));
+      return true;
     }, "Registration failed");
   }
 
@@ -33,18 +34,18 @@ export function useAuth() {
     }, "Login failed");
   }
 
- async function handleGetMe() {
-  try {
-    dispatch(setLoading(true));
-    const data = await getMe();
-    dispatch(setUser(data.user));
-  } catch (error) {
-    // silently ignore - user just isn't logged in
-    dispatch(setUser(null));
-  } finally {
-    dispatch(setLoading(false));
+  async function handleGetMe() {
+    try {
+      dispatch(setLoading(true));
+      const data = await getMe();
+      dispatch(setUser(data.user));
+    } catch (error) {
+      // silently ignore - user just isn't logged in
+      dispatch(setUser(null));
+    } finally {
+      dispatch(setLoading(false));
+    }
   }
-}
 
   return { handleGetMe, handleLogin, handleRegister };
 }

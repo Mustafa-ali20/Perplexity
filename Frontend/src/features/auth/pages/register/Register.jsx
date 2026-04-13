@@ -1,5 +1,7 @@
 import { useState } from "react";
-import "./Register.css";
+import { useNavigate, Link } from "react-router";
+import { useAuth } from "../../hook/useAuth";
+import "./Register.scss";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -7,16 +9,39 @@ const Register = () => {
     email: "",
     password: "",
   });
-
   const [showPassword, setShowPassword] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState({});
+
+  const { handleRegister } = useAuth();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmitForm = (e) => {
+  const handleSubmitForm = async (e) => {
     e.preventDefault();
-    console.log("Register form submitted:", formData);
+    setFieldErrors({});
+
+    try {
+      const success = await handleRegister({
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+      });
+      if (success)
+        navigate("/verify-email", { state: { email: formData.email } });
+    } catch (error) {
+      const responseData = error.response?.data;
+      if (responseData?.errors) {
+        const mapped = {};
+        responseData.errors.forEach((e) => (mapped[e.path] = e.msg));
+        setFieldErrors(mapped);
+      }
+      if (responseData?.message) {
+        setFieldErrors({ email: responseData.message });
+      }
+    }
   };
 
   return (
@@ -112,10 +137,13 @@ const Register = () => {
                     value={formData.username}
                     onChange={handleChange}
                     placeholder="your_handle"
-                    className="input-field w-full px-4 py-3 rounded relative z-10"
+                    className={`input-field w-full px-4 py-3 rounded relative z-10 ${fieldErrors.username ? "error" : ""}`}
                     required
                   />
                 </div>
+                {fieldErrors.username && (
+                  <p className="field-error">{fieldErrors.username}</p>
+                )}
               </div>
 
               {/* email */}
@@ -128,10 +156,13 @@ const Register = () => {
                     value={formData.email}
                     onChange={handleChange}
                     placeholder="you@domain.com"
-                    className="input-field w-full px-4 py-3 rounded relative z-10"
+                    className={`input-field w-full px-4 py-3 rounded relative z-10 ${fieldErrors.email ? "error" : ""}`}
                     required
                   />
                 </div>
+                {fieldErrors.email && (
+                  <p className="field-error">{fieldErrors.email}</p>
+                )}
               </div>
 
               {/* password */}
@@ -156,6 +187,9 @@ const Register = () => {
                     {showPassword ? "HIDE" : "SHOW"}
                   </button>
                 </div>
+                {fieldErrors.password && (
+                  <p className="field-error">{fieldErrors.password}</p>
+                )}
               </div>
 
               <div className="pt-2">

@@ -154,3 +154,16 @@ $border-subtle: #0f1e21;
     letter-spacing: 0.1em;
     font-family: 'DM Mono', monospace;
 }
+
+.input-field.error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px #ef444415;
+}
+
+.field-error {
+  color: #ef4444;
+  font-size: 0.7rem;
+  margin-top: 4px;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 0.05em;
+}

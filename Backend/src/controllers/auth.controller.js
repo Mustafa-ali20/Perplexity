@@ -27,19 +27,62 @@ export const register = asyncHandler(async (req, res) => {
     { expiresIn: "2d" },
   );
 
-  const verifyUrl = `${process.env.CLIENT_URL}/api/auth/verify-email?token=${emailVerificationToken}`;
+  const verifyUrl = `${process.env.CLIENT_URL}/verified?token=${emailVerificationToken}`;
 
   await sendEmail({
-    to: email,
-    subject: "Welcome to Perplexity!",
-    html: `
-    <p>Hi ${username},</p>
-    <p>Thank you for registering at <strong>Perplexity</strong>. We're excited to have you on board!</p>
-    <a href="${verifyUrl}">Verify Email</a>
-    <p>If you didn't create an account, please ignore this email.</p>
-    <p>Best regards,<br>The Perplexity Team</p>
+  to: email,
+  subject: "Verify your Perplexity account",
+  html: `
+    <div style="font-family: 'Courier New', monospace; background: #f4f6f8; padding: 40px 20px;">
+      <div style="max-width: 540px; margin: 0 auto; background: #ffffff; border-radius: 6px; overflow: hidden; border: 1px solid #e2e8f0;">
+        
+        <!-- header -->
+        <div style="padding: 28px 40px; background: #080e10; border-bottom: 3px solid #31b8c6;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 8px; height: 8px; border-radius: 50%; background: #31b8c6;"></div>
+            <span style="color: #ffffff; font-size: 15px; font-weight: 700; letter-spacing: 0.04em;">Perplexity</span>
+          </div>
+        </div>
+
+        <!-- body -->
+        <div style="padding: 36px 40px;">
+          <p style="color: #64748b; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; margin: 0 0 12px;">Email Verification</p>
+          <h1 style="color: #0f172a; font-size: 22px; font-weight: 700; margin: 0 0 16px; letter-spacing: -0.01em;">Hey ${username} 👋</h1>
+          <p style="color: #475569; font-size: 14px; line-height: 1.8; margin: 0 0 8px;">
+            Thanks for creating a Perplexity account. Please verify your email address to get started.
+          </p>
+          <p style="color: #94a3b8; font-size: 13px; line-height: 1.8; margin: 0 0 32px;">
+            This link will expire in <strong style="color: #31b8c6;">48 hours</strong>.
+          </p>
+
+          <!-- button -->
+          <a href="${verifyUrl}" style="display: inline-block; background: #31b8c6; color: #ffffff; text-decoration: none; padding: 13px 32px; border-radius: 5px; font-size: 13px; font-weight: 700; letter-spacing: 0.06em;">
+            Verify my email →
+          </a>
+
+          <!-- divider -->
+          <div style="height: 1px; background: #e2e8f0; margin: 36px 0;"></div>
+
+          <p style="color: #94a3b8; font-size: 12px; line-height: 1.8; margin: 0;">
+            If you didn't sign up for Perplexity, you can safely ignore this email.
+          </p>
+          <p style="color: #cbd5e1; font-size: 11px; margin: 12px 0 0;">
+            If the button doesn't work, copy and paste this link:<br/>
+            <a href="${verifyUrl}" style="color: #31b8c6; word-break: break-all;">${verifyUrl}</a>
+          </p>
+        </div>
+
+        <!-- footer -->
+        <div style="padding: 20px 40px; background: #f8fafc; border-top: 1px solid #e2e8f0;">
+          <p style="color: #94a3b8; font-size: 11px; margin: 0;">
+            © 2026 Perplexity · You're receiving this because you signed up at perplexity.app
+          </p>
+        </div>
+
+      </div>
+    </div>
   `,
-  });
+});
 
   res.status(201).json({
     message:
@@ -89,7 +132,7 @@ export const login = asyncHandler(async (req, res) => {
 
   res.cookie("token", token, {
     httpOnly: true,
-    maxAge: 7 * 24 * 60 * 60 * 1000, 
+    maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
   res.status(200).json({
@@ -129,20 +172,26 @@ export const verifyEmail = asyncHandler(async (req, res) => {
   }
 
   if (user.verified) {
-    return res.status(400).json({
-      success: false,
-      message: "Email is already verified",
-    });
+    res.status(400);
+    throw new Error("Email is already verified");
   }
 
   user.verified = true;
   await user.save();
 
-  const html = `
-    <h1>Email verified successfully</h1>
-    <p>Your email has been verified. You can now log into your account</p>
-    <a href="http://localhost:3000/login">Go to Login</a>
-  `;
+  res.status(200).json({
+    success: true,
+    message: "Email verified successfully",
+  });
+});
 
-  res.status(200).send(html);
+export const logout = asyncHandler(async (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "Logged out successfully",
+  });
 });
