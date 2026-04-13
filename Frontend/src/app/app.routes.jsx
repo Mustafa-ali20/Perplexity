@@ -1,30 +1,48 @@
 import { createBrowserRouter } from "react-router";
-import Login from "../features/auth/pages/login/Login";
-import Register from "../features/auth/pages/register/Register";
-import Dashboard from "../features/chat/pages/Dashboard";
+import { lazy, Suspense } from "react";
 import Protected from "../features/auth/components/Protected";
-import VerifyEmail from "../features/auth/pages/verify-email/VerfiyEmail";
-import Verified from "../features/auth/pages/verified/Verified";
+
+const Login = lazy(() => import("../features/auth/pages/login/Login"));
+const Register = lazy(() => import("../features/auth/pages/register/Register"));
+const Dashboard = lazy(() => import("../features/chat/pages/Dashboard"));
+const VerifyEmail = lazy(
+  () => import("../features/auth/pages/verify-email/VerfiyEmail"),
+);
+const Verified = lazy(() => import("../features/auth/pages/verified/Verified"));
+
+const withSuspense = (Component) => (
+  <Suspense
+    fallback={
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100vh",
+        }}
+      >
+        <div
+          style={{
+            width: "36px",
+            height: "36px",
+            border: "3px solid transparent",
+            borderTop: "3px solid #31b8c6", // matches your TopLoader color
+            borderRadius: "50%",
+            animation: "spin 0.7s linear infinite",
+          }}
+        />
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      </div>
+    }
+  >
+    <Component />
+  </Suspense>
+);
 
 export const router = createBrowserRouter([
-  {
-    path: "/login",
-    element: <Login />,
-  },
-  {
-    path: "/register",
-    element: <Register />,
-  },
-  {
-    path: "/",
-    element: <Dashboard />,
-  },
-  {
-    path: "/verify-email",
-    element: <VerifyEmail />,
-  },
-  {
-    path: "/verified",
-    element: <Verified />,
-  },
+  { path: "/login", element: withSuspense(Login) },
+  { path: "/register", element: withSuspense(Register) },
+  { path: "/", element: withSuspense(Dashboard) },
+  { path: "/verify-email", element: withSuspense(VerifyEmail) },
+  { path: "/verified", element: withSuspense(Verified) },
 ]);
