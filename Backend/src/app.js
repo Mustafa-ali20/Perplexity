@@ -13,7 +13,7 @@ app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(
   cors({
-    origin: "https://perplexity-beryl.vercel.app/",
+    origin: "https://perplexity-beryl.vercel.app",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
   }),
